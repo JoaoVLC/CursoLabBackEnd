@@ -2,24 +2,10 @@
 
 Projeto de Backend Development, PUCPR, desenvolvido para a **Opção 1 — Estendendo os serviços**. A API permite cadastrar categorias, cursos e alunos, além de matricular alunos em cursos.
 
-Repositório: [JoaoVLC/CursoLabBackEnd](https://github.com/JoaoVLC/CursoLabBackEnd).
-
-Esta é a versão para a **apresentação parcial, com peso de 30% da nota**. A exigência técnica dessa etapa é implementar pelo menos metade dos endpoints planejados.
-
 ## Integrantes
 
 - João Vitor Lima Cecilio
 - Barbara Franco
-
-## Vídeo no YouTube
-
-**Pendente para a entrega final:** inserir aqui o link do vídeo no YouTube. Pode ser não listado. Todos os integrantes precisam participar do vídeo ou entregar seus próprios vídeos, conforme o enunciado.
-
-## Situação da parcial de 29/10/2026
-
-**16 dos 18 endpoints do escopo final estão implementados: 88,9% dos endpoints.** O mínimo, neste escopo, é 9. Isso se refere à quantidade de endpoints; não significa que 88,9% de todos os requisitos ou da nota estejam concluídos.
-
-Uma operação é contada como a combinação de método HTTP e rota. O health check e as páginas de infraestrutura não entram na contagem.
 
 **A autenticação JWT ainda não está implementada.** Os endpoints desta parcial estão abertos, inclusive PUT e DELETE. A aplicação inicia somente em `127.0.0.1` para a demonstração local. A entrega final ainda precisa da autenticação/proteção das ações, do vídeo e da identificação completa da equipe.
 
