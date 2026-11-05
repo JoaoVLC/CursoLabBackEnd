@@ -9,7 +9,7 @@ Esta é a versão para a **apresentação parcial, com peso de 30% da nota**. A 
 ## Integrantes
 
 - João Vitor Lima Cecilio
-- Acrescentar os nomes dos demais integrantes, caso o trabalho seja em equipe.
+- Barbara Franco
 
 ## Vídeo no YouTube
 
