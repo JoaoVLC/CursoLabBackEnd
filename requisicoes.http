@@ -1,0 +1,87 @@
+### Exemplos para um cliente HTTP que aceite arquivos .http.
+### No Swagger, copie os corpos JSON e use os IDs retornados pelo servidor.
+@baseUrl = http://localhost:8080/api
+@categoriaId = 1
+@cursoId = 1
+@alunoId = 2
+
+### Servidor
+GET {{baseUrl}}/health
+
+### Listar categorias
+GET {{baseUrl}}/categorias
+
+### Criar categoria (repetir o mesmo nome retorna 409)
+POST {{baseUrl}}/categorias
+Content-Type: application/json
+
+{"nome":"Desenvolvimento Web"}
+
+### Criar curso (anote o ID retornado antes de atualizar/excluir)
+POST {{baseUrl}}/cursos
+Content-Type: application/json
+
+{"titulo":"Kotlin aplicado","descricao":"Exemplo da apresentação","cargaHoraria":24,"categoriaId":{{categoriaId}}}
+
+### Listar, filtrar e ordenar
+GET {{baseUrl}}/cursos?minHoras=25&ordenarPor=cargaHoraria&direcao=DESC
+
+### Consultar curso
+GET {{baseUrl}}/cursos/{{cursoId}}
+
+### Atualizar curso
+PUT {{baseUrl}}/cursos/{{cursoId}}
+Content-Type: application/json
+
+{"titulo":"Kotlin atualizado","descricao":"Conteúdo revisado","cargaHoraria":32,"categoriaId":{{categoriaId}}}
+
+### Criar aluno
+POST {{baseUrl}}/alunos
+Content-Type: application/json
+
+{"nome":"Carla Exemplo","email":"carla@example.com"}
+
+### Listar alunos
+GET {{baseUrl}}/alunos
+
+### Consultar aluno
+GET {{baseUrl}}/alunos/{{alunoId}}
+
+### Atualizar aluno
+PUT {{baseUrl}}/alunos/{{alunoId}}
+Content-Type: application/json
+
+{"nome":"Bruno Atualizado","email":"bruno.atualizado@example.com"}
+
+### Matricular aluno em curso
+POST {{baseUrl}}/cursos/{{cursoId}}/matriculas
+Content-Type: application/json
+
+{"alunoId":{{alunoId}}}
+
+### Listar matrículas do curso
+GET {{baseUrl}}/cursos/{{cursoId}}/matriculas
+
+### Listar matrículas do aluno
+GET {{baseUrl}}/alunos/{{alunoId}}/matriculas
+
+### Remover associação (não exclui aluno nem curso)
+DELETE {{baseUrl}}/cursos/{{cursoId}}/matriculas/{{alunoId}}
+
+### Excluir curso (409 se ainda possuir matrículas)
+DELETE {{baseUrl}}/cursos/{{cursoId}}
+
+### Excluir aluno (409 se ainda possuir matrículas)
+DELETE {{baseUrl}}/alunos/{{alunoId}}
+
+### Erro esperado: validação 422
+POST {{baseUrl}}/alunos
+Content-Type: application/json
+
+{"nome":"","email":"invalido"}
+
+### Erro esperado: ordenação 400
+GET {{baseUrl}}/cursos?ordenarPor=campoInexistente
+
+### Erro esperado: não encontrado 404
+GET {{baseUrl}}/cursos/999999

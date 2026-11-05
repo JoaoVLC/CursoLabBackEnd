@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: cursolab
+  datasource:
+    url: ${DB_URL:jdbc:h2:file:./data/cursolab}
+    username: sa
+    password: ${DB_PASSWORD:sa}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+  mvc:
+    problemdetails:
+      enabled: true
+  web:
+    error:
+      include-stacktrace: never
+      include-exception: false
+
+server:
+  # Parcial local: JWT ainda será implementado antes da entrega final.
+  address: 127.0.0.1
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+    tags-sorter: alpha
+    operations-sorter: method
+
+logging:
+  level:
+    br.pucpr.cursolab: INFO
+
+app:
+  seed-enabled: ${SEED_ENABLED:true}
