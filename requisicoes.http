@@ -1,24 +1,40 @@
 ### Exemplos para um cliente HTTP que aceite arquivos .http.
 ### No Swagger, copie os corpos JSON e use os IDs retornados pelo servidor.
+### Para preencher senha e token, copie este arquivo para requisicoes.local.http.
 @baseUrl = http://localhost:8080/api
+@usuario = operador
+@senha = SUBSTITUA_PELA_SENHA_LOCAL
+@token = COLE_O_ACCESS_TOKEN
 @categoriaId = 1
-@cursoId = 1
-@alunoId = 2
+@cursoId = ID_DO_CURSO_CRIADO
+@alunoId = ID_DO_ALUNO_CRIADO
 
 ### Servidor
 GET {{baseUrl}}/health
+
+### Login (copie accessToken para a variável token)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{"usuario":"{{usuario}}","senha":"{{senha}}"}
+
+### Operador autenticado
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
 
 ### Listar categorias
 GET {{baseUrl}}/categorias
 
 ### Criar categoria (repetir o mesmo nome retorna 409)
 POST {{baseUrl}}/categorias
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"nome":"Desenvolvimento Web"}
 
 ### Criar curso (anote o ID retornado antes de atualizar/excluir)
 POST {{baseUrl}}/cursos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"titulo":"Kotlin aplicado","descricao":"Exemplo da apresentação","cargaHoraria":24,"categoriaId":{{categoriaId}}}
@@ -31,51 +47,66 @@ GET {{baseUrl}}/cursos/{{cursoId}}
 
 ### Atualizar curso
 PUT {{baseUrl}}/cursos/{{cursoId}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"titulo":"Kotlin atualizado","descricao":"Conteúdo revisado","cargaHoraria":32,"categoriaId":{{categoriaId}}}
 
 ### Criar aluno
 POST {{baseUrl}}/alunos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"nome":"Carla Exemplo","email":"carla@example.com"}
 
 ### Listar alunos
 GET {{baseUrl}}/alunos
+Authorization: Bearer {{token}}
 
 ### Consultar aluno
 GET {{baseUrl}}/alunos/{{alunoId}}
+Authorization: Bearer {{token}}
 
 ### Atualizar aluno
 PUT {{baseUrl}}/alunos/{{alunoId}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"nome":"Bruno Atualizado","email":"bruno.atualizado@example.com"}
 
 ### Matricular aluno em curso
 POST {{baseUrl}}/cursos/{{cursoId}}/matriculas
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"alunoId":{{alunoId}}}
 
 ### Listar matrículas do curso
 GET {{baseUrl}}/cursos/{{cursoId}}/matriculas
+Authorization: Bearer {{token}}
 
 ### Listar matrículas do aluno
 GET {{baseUrl}}/alunos/{{alunoId}}/matriculas
+Authorization: Bearer {{token}}
 
 ### Remover associação (não exclui aluno nem curso)
 DELETE {{baseUrl}}/cursos/{{cursoId}}/matriculas/{{alunoId}}
+Authorization: Bearer {{token}}
+
+### Erro esperado 401 ao tentar excluir sem token
+DELETE {{baseUrl}}/cursos/{{cursoId}}
 
 ### Excluir curso (409 se ainda possuir matrículas)
 DELETE {{baseUrl}}/cursos/{{cursoId}}
+Authorization: Bearer {{token}}
 
 ### Excluir aluno (409 se ainda possuir matrículas)
 DELETE {{baseUrl}}/alunos/{{alunoId}}
+Authorization: Bearer {{token}}
 
 ### Erro esperado: validação 422
 POST {{baseUrl}}/alunos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"nome":"","email":"invalido"}

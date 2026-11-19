@@ -1,5 +1,7 @@
 package br.pucpr.cursolab.matriculas
 
+import br.pucpr.cursolab.config.BEARER_AUTH
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.*
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @Tag(name = "4. Matrículas", description = "Associações entre alunos e cursos")
+@SecurityRequirement(name = BEARER_AUTH)
 @Validated
 class MatriculaController(private val service: MatriculaService) {
     @PostMapping("/cursos/{cursoId}/matriculas")

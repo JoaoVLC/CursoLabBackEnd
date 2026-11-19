@@ -7,9 +7,13 @@ Projeto de Backend Development, PUCPR, desenvolvido para a **Opção 1 — Esten
 - João Vitor Lima Cecilio
 - Barbara Franco
 
-**A autenticação JWT ainda não está implementada.** Os endpoints desta parcial estão abertos, inclusive PUT e DELETE. A aplicação inicia somente em `127.0.0.1` para a demonstração local. A entrega final ainda precisa da autenticação/proteção das ações, do vídeo e da identificação completa da equipe.
+## Vídeo de apresentação
 
-| Requisito | Implementação na parcial |
+Link do YouTube a incluir após a gravação de João e Barbara. O vídeo pode ser não listado.
+
+## Requisitos
+
+| Requisito | Implementação |
 |---|---|
 | Quatro novas classes de domínio | Categoria, Curso, Aluno e Matricula |
 | Dois tipos de relacionamento | Categoria 1:N Curso; Aluno N:N Curso por Matricula |
@@ -17,57 +21,70 @@ Projeto de Backend Development, PUCPR, desenvolvido para a **Opção 1 — Esten
 | Endpoints de associação | Criar, listar e remover matrículas; definir/trocar categoria no POST/PUT de curso |
 | Consulta com filtros e ordenação | GET /api/cursos com parâmetros de query |
 | Logs e exceções em pelo menos dois serviços | CursoService, AlunoService e também os demais serviços |
-| Autenticação para ações destrutivas | **Pendente para a entrega final** |
-| GitHub, integrantes e vídeo | Código publicado neste repositório; revisar os integrantes e inserir o vídeo |
+| Autenticação para ações destrutivas | Login com senha BCrypt e JWT obrigatório para criação, alteração e exclusão |
 
 ## Tecnologias e origem da base
 
 - Kotlin **2.2.21**, Spring Boot **4.0.7** e Java **21**.
 - Gradle Wrapper **9.6.1**, Spring Data JPA, H2 e Bean Validation.
-- Springdoc/Swagger **3.0.2** e JUnit.
+- Spring Security com JWT, Springdoc/Swagger **3.0.2** e JUnit.
 - A organização por entidade, as versões e o Gradle Wrapper foram baseados no `authserver_aula04.zip` fornecido na disciplina do professor Vinícius Godoy Mendonça.
 - O modelo de cursos e matrículas é uma aplicação nova construída sobre essa estrutura. O código segue Controller → Service → Repository, com entidades e DTOs separados.
 - O material inicial contém exemplos com Spring Boot 4.0.5; este projeto segue o **build.gradle.kts enviado**, que utiliza 4.0.7.
 
 ## Executar no Windows
 
-### Executável incluído no ZIP da parcial
-
-O ZIP original da parcial inclui `executavel/cursolab.jar`, compilado a partir deste código. Com Java 21 configurado, extraia toda a pasta do ZIP original e abra **apresentar-windows.bat**. Aguarde o servidor iniciar e acesse o Swagger. Esse caminho não baixa Gradle nem bibliotecas e pode ser usado sem internet depois de instalar o Java.
-
-O JAR pronto não está versionado neste repositório. Ao clonar ou baixar o código pelo GitHub, siga o caminho de desenvolvimento abaixo ou utilize **iniciar-windows.bat**.
-
-O executável contém a mesma parcial do código-fonte. Se você alterar o código, use o caminho de desenvolvimento abaixo para compilar as mudanças; o JAR pronto não é atualizado automaticamente.
-
-### Caminho para desenvolver e executar o código
-
-1. Extraia **toda** a pasta do ZIP. Não execute os arquivos de dentro do ZIP.
-2. Tenha um **JDK 21** instalado. JRE sozinho não compila o projeto. Uma opção é o [Temurin 21](https://adoptium.net/temurin/releases/?version=21).
-3. Confira no terminal: `java -version` e `javac -version`. Ambos devem indicar a versão 21 para este passo a passo. Se necessário, ajuste `JAVA_HOME` para a pasta do JDK 21 e abra um novo terminal.
-4. Abra a pasta do projeto no terminal e execute:
+1. Clone o repositório ou extraia o ZIP. Abra no IntelliJ a pasta que contém `build.gradle.kts`.
+2. Configure o **JDK 21** como JDK do projeto e do Gradle. Confira `java -version` e `javac -version` no terminal. Caso necessário, instale o [Temurin 21](https://adoptium.net/temurin/releases/?version=21).
+3. No PowerShell da pasta do projeto, cadastre a conta local ao iniciar a aplicação. Escolha uma senha para a demonstração com pelo menos 8 caracteres e até 72 bytes em UTF-8.
 
 ```powershell
+$env:CURSOLAB_OPERADOR_USUARIO = "operador"
+$env:CURSOLAB_OPERADOR_SENHA = [System.Net.NetworkCredential]::new("", (Read-Host "Senha local do operador" -AsSecureString)).Password
 .\gradlew.bat bootRun
 ```
 
-Também é possível abrir `iniciar-windows.bat`. O primeiro início precisa de internet para baixar Gradle e dependências. Não é necessário instalar Gradle, MySQL ou Docker separadamente.
+4. Aguarde a mensagem `Started CursoLabApplicationKt` ou `Started CursoLabApplication`. Ao criar a conta, o servidor também registra `Operador cadastrado`.
+5. Abra o [Swagger](http://localhost:8080/api/swagger-ui/index.html). Mantenha o terminal aberto e use `Ctrl+C` para parar o servidor.
 
-5. Aguarde a mensagem `Started CursoLabApplicationKt` ou `Started CursoLabApplication` nos logs.
-6. Abra [Swagger](http://localhost:8080/api/swagger-ui/index.html).
-7. Deixe o terminal aberto. Use `Ctrl+C` para parar o servidor.
+O primeiro build baixa as dependências pelo Gradle Wrapper. O banco H2 é incluído na aplicação e guarda os registros em `data/`.
 
-### Pelo IntelliJ IDEA
+As variáveis de ambiente valem para o terminal onde foram definidas. Depois de cadastrar a conta, você pode fechar o terminal e executar de novo com `.\gradlew.bat bootRun` ou `iniciar-windows.bat`. A conta permanece no banco. Se quiser mudar a senha, defina a nova senha para o mesmo usuário e inicie novamente.
 
-Abra a pasta que contém `build.gradle.kts`; importe o projeto Gradle e selecione o JDK 21 no projeto e em Gradle JVM. Espere a sincronização terminar. Execute a função `main` de `src/main/kotlin/br/pucpr/cursolab/CursoLabApplication.kt` ou a tarefa Gradle `bootRun`.
+### Gerar o executável para a demonstração
+
+```powershell
+.\gradlew.bat bootJar
+java -jar .\build\libs\cursolab-1.0.0.jar
+```
+
+Após gerar o JAR, `apresentar-windows.bat` também pode abri-lo. Gere um novo JAR após mudanças de código. Para usar o mesmo banco, inicie a aplicação na pasta que contém `build.gradle.kts`. Mantenha uma instância por vez.
 
 ### Linux e macOS
 
-Com JDK 21 instalado:
-
 ```bash
-chmod +x gradlew
+read -rs CURSOLAB_OPERADOR_SENHA
+export CURSOLAB_OPERADOR_SENHA
 ./gradlew bootRun
 ```
+
+Digite a senha ao executar `read`. O usuário padrão é `operador`.
+
+## Usar a autenticação no Swagger
+
+1. Em **0. Autenticação**, abra `POST /auth/login` e clique em **Try it out**.
+2. Envie o JSON abaixo usando a senha escolhida no PowerShell.
+
+```json
+{"usuario": "operador", "senha": "SUBSTITUA_PELA_SUA_SENHA_LOCAL"}
+```
+
+3. Copie o valor de `accessToken` da resposta e cole no botão **Authorize** do Swagger. Ele acrescenta o prefixo `Bearer` ao enviar o cabeçalho `Authorization`.
+4. Execute `GET /auth/me` para conferir o usuário autenticado. As operações com cadeado também podem ser usadas.
+
+`OperadorInicial` cadastra a conta ou atualiza sua senha conforme a configuração de entrada. A entidade `Operador` tem tabela própria e guarda somente o hash BCrypt da senha. `AuthService` verifica as credenciais e emite um token que vale 30 minutos. A chave de assinatura é gerada em memória a cada início da aplicação. Faça login novamente depois de reiniciar ou quando o token expirar.
+
+O catálogo de cursos e categorias permanece público. O Spring Security exige autenticação para qualquer operação de escrita e para as consultas de alunos e matrículas. Em um banco novo, defina a senha do operador para usar essas rotas.
 
 ## Endereços
 
@@ -76,13 +93,12 @@ chmod +x gradlew
 | Swagger | http://localhost:8080/api/swagger-ui/index.html |
 | Especificação OpenAPI | http://localhost:8080/api/v3/api-docs |
 | Verificação do servidor | http://localhost:8080/api/health |
-| Console H2 | http://localhost:8080/api/h2-console |
 
-No H2 Console, utilize `org.h2.Driver`, JDBC URL `jdbc:h2:file:./data/cursolab`, usuário `sa` e senha `sa` (valores locais padrão). O banco real da aplicação está na pasta `data/`, e permanece após reiniciar. Os testes utilizam outro banco, em memória.
+O servidor escuta no endereço local `127.0.0.1`. A URL padrão do banco é `jdbc:h2:file:./data/cursolab`. A versão final usa a API para acesso aos dados e remove o console web do H2.
 
 ## Dados de demonstração
 
-O `SeedData` insere dados fictícios somente quando o banco está completamente vazio:
+O `SeedData` insere os seguintes dados fictícios quando ainda não há registros de categorias, cursos, alunos ou matrículas.
 
 - Categorias: Programação e Banco de Dados.
 - Cursos: Kotlin para iniciantes (20h), API REST com Spring Boot (40h) e SQL essencial (30h).
@@ -100,36 +116,34 @@ erDiagram
     ALUNO ||--o{ MATRICULA : possui
 ```
 
-`Categoria` e `Curso` formam um relacionamento um-para-muitos. `Aluno` e `Curso` formam um muitos-para-muitos **com entidade intermediária**, `Matricula`, que registra também `criadaEm`. Por isso a implementação usa dois relacionamentos `@ManyToOne` na matrícula, sem uma anotação `@ManyToMany` direta.
+`Categoria` e `Curso` formam um relacionamento um para muitos. `Aluno` e `Curso` formam um relacionamento muitos para muitos por meio de `Matricula`. A matrícula guarda a data em `criadaEm` e usa dois vínculos `@ManyToOne`, um para cada entidade.
 
 O par `(aluno_id, curso_id)` é único no banco: o mesmo aluno não pode ser matriculado duas vezes no mesmo curso.
 
 ## Endpoints
 
-Todos usam o prefixo `/api`.
+Os 18 endpoints de negócio usam o prefixo `/api`.
 
-| Nº | Método | Rota | Função | Situação |
+| Nº | Método | Rota | Função | Acesso |
 |---|---|---|---|---|
-| 1 | POST | /categorias | Cadastrar categoria | Implementado |
-| 2 | GET | /categorias | Listar categorias | Implementado |
-| 3 | POST | /cursos | Cadastrar curso e associar categoria | Implementado |
-| 4 | GET | /cursos | Listar, filtrar e ordenar cursos | Implementado |
-| 5 | GET | /cursos/{id} | Consultar curso | Implementado |
-| 6 | PUT | /cursos/{id} | Atualizar curso e/ou trocar categoria | Implementado |
-| 7 | DELETE | /cursos/{id} | Excluir curso sem matrículas | Implementado |
-| 8 | POST | /alunos | Cadastrar aluno | Implementado |
-| 9 | GET | /alunos | Listar alunos | Implementado |
-| 10 | GET | /alunos/{id} | Consultar aluno | Implementado |
-| 11 | PUT | /alunos/{id} | Atualizar aluno | Implementado |
-| 12 | DELETE | /alunos/{id} | Excluir aluno sem matrículas | Implementado |
-| 13 | POST | /cursos/{cursoId}/matriculas | Matricular aluno | Implementado |
-| 14 | GET | /cursos/{cursoId}/matriculas | Consultar matrículas do curso | Implementado |
-| 15 | DELETE | /cursos/{cursoId}/matriculas/{alunoId} | Remover associação | Implementado |
-| 16 | GET | /alunos/{alunoId}/matriculas | Consultar matrículas do aluno | Implementado |
-| 17 | POST | /auth/login | Autenticar e emitir JWT | Planejado para a final |
-| 18 | GET | /auth/me | Consultar operador autenticado | Planejado para a final |
-
-Os endpoints planejados **não são rotas fictícias nem stubs**: ainda não existem. A entidade de conta de acesso será separada de `Aluno`; nem todo aluno cadastrado precisa operar a API. A proteção das rotas existentes será acrescentada junto com a autenticação.
+| 1 | POST | /categorias | Cadastrar categoria | JWT |
+| 2 | GET | /categorias | Listar categorias | Público |
+| 3 | POST | /cursos | Cadastrar curso e associar categoria | JWT |
+| 4 | GET | /cursos | Listar, filtrar e ordenar cursos | Público |
+| 5 | GET | /cursos/{id} | Consultar curso | Público |
+| 6 | PUT | /cursos/{id} | Atualizar curso e/ou trocar categoria | JWT |
+| 7 | DELETE | /cursos/{id} | Excluir curso sem matrículas | JWT |
+| 8 | POST | /alunos | Cadastrar aluno | JWT |
+| 9 | GET | /alunos | Listar alunos | JWT |
+| 10 | GET | /alunos/{id} | Consultar aluno | JWT |
+| 11 | PUT | /alunos/{id} | Atualizar aluno | JWT |
+| 12 | DELETE | /alunos/{id} | Excluir aluno sem matrículas | JWT |
+| 13 | POST | /cursos/{cursoId}/matriculas | Matricular aluno | JWT |
+| 14 | GET | /cursos/{cursoId}/matriculas | Consultar matrículas do curso | JWT |
+| 15 | DELETE | /cursos/{cursoId}/matriculas/{alunoId} | Remover associação | JWT |
+| 16 | GET | /alunos/{alunoId}/matriculas | Consultar matrículas do aluno | JWT |
+| 17 | POST | /auth/login | Verificar credenciais e emitir JWT | Usuário e senha |
+| 18 | GET | /auth/me | Consultar operador autenticado | JWT |
 
 ## Exemplos de JSON
 
@@ -188,6 +202,8 @@ A paginação também existe na listagem de alunos e de matrículas. O retorno �
 - **201:** registro criado.
 - **204:** exclusão bem-sucedida, sem corpo de resposta.
 - **400:** JSON malformado, tipo incorreto ou ordenação inválida.
+- **401:** credenciais de login incorretas ou token ausente, inválido ou expirado.
+- **403:** token válido sem a permissão de operador.
 - **404:** curso, aluno, categoria ou matrícula não encontrados.
 - **409:** e-mail/categoria/matrícula duplicados ou tentativa de excluir aluno/curso matriculado.
 - **422:** violação de validação, como nome vazio, e-mail inválido ou carga horária zero.
@@ -196,33 +212,17 @@ A paginação também existe na listagem de alunos e de matrículas. O retorno �
 
 ## Testes
 
-Esta entrega foi compilada em Java 21 e passou nos **8 testes de integração**. O JAR também foi iniciado para verificar Swagger, contagem de operações e persistência após reiniciar. Veja [VALIDACAO.md](VALIDACAO.md).
+Execute a suíte com o JDK 21.
 
 ```powershell
 .\gradlew.bat test
 ```
 
-Relatório: `build/reports/tests/test/index.html`. A suíte de integração exercita os CRUDs, filtros combinados, paginação, os dois lados das matrículas, duplicidade, integridade de exclusão e respostas a entradas inválidas. O banco de teste é isolado do banco da demonstração.
-
-Para compilar também o executável:
-
-```powershell
-.\gradlew.bat test bootJar
-java -jar .\build\libs\cursolab-0.0.1-SNAPSHOT.jar
-```
+O relatório fica em `build/reports/tests/test/index.html`. Os testes usam H2 em memória e incluem CRUDs, filtros, matrículas, validações, login e proteção de rotas. Veja os resultados em [VALIDACAO.md](VALIDACAO.md).
 
 ## Arquivos para estudar
 
 Comece pelo [GUIA_DE_ESTUDO.md](GUIA_DE_ESTUDO.md). Para ensaiar, siga o [ROTEIRO_APRESENTACAO.md](ROTEIRO_APRESENTACAO.md). O arquivo [requisicoes.http](requisicoes.http) contém exemplos adicionais.
-
-## Próxima etapa: entrega final
-
-1. Acrescentar conta de operador, hash de senha, login e token JWT.
-2. Proteger criação/alteração/exclusão e os dados de alunos/matrículas; testar pedidos sem token, com token inválido e com token válido.
-3. Revisar a implementação de segurança com a Aula 07 e a configuração com a Aula 08.
-4. Revisar o código com todos os integrantes e preencher seus nomes neste README.
-5. Atualizar este repositório conforme o projeto evoluir e gravar o vídeo com a participação de todos.
-6. Inserir o link do YouTube acima e fazer a entrega individual, como pede o enunciado.
 
 ## Obter o código pelo GitHub
 
@@ -245,6 +245,8 @@ Abra a pasta que contém `build.gradle.kts` no IntelliJ e siga a seção de exec
 | Porta 8080 ocupada | Parar a outra execução ou definir `$env:PORT="8081"` no PowerShell antes de iniciar |
 | `Database may be already in use` | Encerrar a outra instância do CursoLab antes de iniciar |
 | `409` ao repetir o exemplo | Consultar o registro já criado ou usar outro e-mail; duplicidade é bloqueada |
+| `401` no login em banco novo | Definir `CURSOLAB_OPERADOR_SENHA` no terminal e iniciar a aplicação para criar a conta |
+| `401` em operação com cadeado | Fazer login e colar o novo `accessToken` em **Authorize** |
 | Swagger retorna erro | Confirmar que o servidor iniciou e usar a URL completa com `/api` |
 
 Para refazer a demonstração do zero, pare a aplicação e **renomeie** a pasta `data` para guardar uma cópia. No próximo início um novo banco será criado. Esse procedimento é opcional e não ocorre automaticamente.
@@ -254,4 +256,5 @@ Para refazer a demonstração do zero, pare a aplicação e **renomeie** a pasta
 - Materiais da disciplina enviados: Conceitos Iniciais, JPA/Relacionamentos e authserver da Aula 04.
 - [Spring Boot](https://docs.spring.io/spring-boot/)
 - [Spring Data JPA](https://docs.spring.io/spring-data/jpa/reference/)
+- [Spring Security com JWT](https://docs.spring.io/spring-security/reference/7.0/servlet/oauth2/resource-server/jwt.html)
 - [Springdoc OpenAPI](https://springdoc.org/)

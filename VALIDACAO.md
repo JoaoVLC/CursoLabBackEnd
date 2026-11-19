@@ -1,30 +1,15 @@
-# Verificação desta entrega
+# Verificação da versão 1.0.0
 
-Validação executada em 28/10/2026 23:15, horário de São Paulo.
+Os testes foram executados em Linux x86_64 com JDK Temurin 21.0.13.1 e Gradle 9.6.1. As tarefas `test bootJar` concluíram com **13 testes de integração aprovados**, sem falhas ou testes ignorados. O Gradle Wrapper iniciou com a versão 9.6.1 e o mesmo JDK.
 
-- Ambiente: Linux x86_64, JDK Temurin 21.0.13, Gradle 9.6.1.
-- Mesmas versões de Kotlin (2.2.21) e Spring Boot (4.0.7) dos arquivos fornecidos.
-- Tarefas Gradle `test bootJar`: concluídas.
-- JUnit: 8 testes, 0 falhas, 0 erros, 0 ignorados.
-- Testes HTTP usando o JAR compilado:
-  - Swagger: HTTP 200.
-  - OpenAPI: 16 operações de negócio + health.
-  - Carga inicial: 2 categorias, 3 cursos, 2 alunos.
-  - Persistência: aluno recuperado após reiniciar o processo.
-  - Carga inicial não duplicada após reiniciar.
+A suíte verificou os CRUDs de curso e aluno, filtros e paginação, matrículas, duplicidade, integridade de exclusão e respostas de validação. Os testes de segurança cobriram a consulta pública ao catálogo, login, armazenamento da senha como hash, bloqueio de operações com token ausente, inválido ou expirado e rejeição de token sem a permissão de operador.
 
-O teste de reinício utilizou um banco separado; o pacote não contém o banco usado nos testes.
+O executável `build/libs/cursolab-1.0.0.jar` também foi verificado por requisições HTTP no servidor local.
 
-Os scripts .bat foram preparados para Windows. A execução validada aqui foi no ambiente Linux indicado; a execução no computador da apresentação ainda precisa ser ensaiada.
+- O Swagger abriu e documentou 18 operações de negócio. As 14 operações que usam JWT exibiram o esquema de segurança. `/health` é uma rota de verificação.
+- Uma tentativa de exclusão sem token retornou 401. Com o token válido, a mesma exclusão retornou 409 enquanto havia uma matrícula. A remoção da matrícula e as exclusões autorizadas retornaram 204.
+- A versão final abriu um banco gerado pela parcial e preservou os cursos, alunos e vínculos existentes.
+- Após reiniciar sem informar a senha por variável de ambiente, a conta e os dados permaneceram disponíveis. O token anterior foi rejeitado e um novo login funcionou.
+- A troca da senha do mesmo operador foi verificada ao reiniciar com a nova configuração. A senha anterior foi rejeitada.
 
-A autenticação JWT continua pendente. Os testes desta parcial não certificam uma proteção que ainda não foi implementada.
-
-## Executável
-
-Arquivo: `executavel/cursolab.jar`. Inclui as dependências da aplicação, sem precisar baixá-las na apresentação.
-
-SHA-256:
-
-```text
-1cd05cd34a4269d09944f361e7504edc0d6a791732345b2bc0243dbe7c176ff9
-```
+Os bancos usados nas verificações foram separados dos dados do projeto. A execução dos arquivos `.bat` no Windows deve ser conferida no computador da demonstração.

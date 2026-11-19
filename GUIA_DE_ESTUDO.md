@@ -4,7 +4,7 @@ Não tente decorar todas as linhas. Acompanhe uma requisição de criação de c
 
 ## 1. O cliente envia um POST
 
-No Swagger, você envia JSON para `POST /api/cursos`. A URL chega ao método `criar` de `cursos/CursoController.kt` porque a classe tem `@RequestMapping("/cursos")` e o método tem `@PostMapping`.
+No Swagger, faça login e autorize o token antes de enviar JSON para `POST /api/cursos`. O Spring Security valida o JWT recebido no cabeçalho `Authorization`. Depois, a requisição chega ao método `criar` de `cursos/CursoController.kt` porque a classe tem `@RequestMapping("/cursos")` e o método tem `@PostMapping`.
 
 `@RequestBody` transforma JSON em `CursoRequest`. `@Valid` executa as validações do DTO: título não vazio, carga horária entre 1 e 1000 e categoriaId positivo.
 
@@ -55,6 +55,14 @@ As operações dos serviços usam `@Transactional`. As leituras usam `readOnly =
 
 `spring.jpa.open-in-view` está desativado: o controller não precisa manter uma sessão de banco aberta para percorrer entidades. Listas de matrículas usam `@EntityGraph` para carregar aluno e curso, e a consulta de cursos usa `join fetch` para a categoria.
 
+## 8. Como o login protege o CRUD
+
+`OperadorInicial.kt` lê o usuário e a senha do ambiente no início da aplicação. O BCrypt transforma a senha em um hash, que é o valor salvo na tabela de operadores. A conta de operador é independente do cadastro de alunos.
+
+`AuthController.kt` recebe o login e chama `AuthService.kt`. O serviço usa o Spring Security para conferir a senha com o hash. Se as credenciais estiverem corretas, devolve um JWT assinado com a identidade do operador, a validade e a permissão. A senha fica fora do token.
+
+Nas outras requisições, `SecurityConfig.kt` define quais rotas aceitam acesso público e quais exigem o token. O Spring Security verifica a assinatura, a validade e a permissão antes de chamar o controller. Assim, um `DELETE` sem token recebe **401**. Um `DELETE` de curso com matrículas, já autenticado, chega ao serviço e recebe **409** pela regra de negócio.
+
 ## Arquivos, em ordem de leitura
 
 1. `src/main/kotlin/br/pucpr/cursolab/CursoLabApplication.kt`
@@ -66,7 +74,8 @@ As operações dos serviços usam `@Transactional`. As leituras usam `readOnly =
 7. `src/main/kotlin/br/pucpr/cursolab/cursos/Curso.kt`
 8. Classes dos pacotes `alunos`, `categorias` e `matriculas`.
 9. `src/main/kotlin/br/pucpr/cursolab/common/GlobalExceptionHandler.kt`
-10. `src/test/kotlin/br/pucpr/cursolab/ApiIntegrationTests.kt`
+10. `src/main/kotlin/br/pucpr/cursolab/auth/SecurityConfig.kt` e `AuthService.kt` no mesmo pacote.
+11. `src/test/kotlin/br/pucpr/cursolab/ApiIntegrationTests.kt`
 
 ## O que foi adaptado em relação à base da aula
 
@@ -78,5 +87,4 @@ As operações dos serviços usam `@Transactional`. As leituras usam `readOnly =
 | Validação e tratamento global | Mantidos e aplicados às regras do novo domínio |
 | Springdoc/Swagger | Mantido e organizado por grupos de endpoints |
 | Exemplo inicial sem relacionamentos de negócio | Categoria 1:N Curso e Aluno N:N Curso por Matricula |
-
-A configuração JWT será adicionada em uma etapa posterior. O material de segurança ainda não faz parte desta implementação parcial.
+| CRUD de usuários sem autenticação na base fornecida | Login de operador por JWT e proteção das operações de escrita e dos dados de alunos |

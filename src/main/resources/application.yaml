@@ -10,9 +10,6 @@ spring:
       ddl-auto: update
     open-in-view: false
     show-sql: false
-  h2:
-    console:
-      enabled: true
   mvc:
     problemdetails:
       enabled: true
@@ -22,7 +19,6 @@ spring:
       include-exception: false
 
 server:
-  # Parcial local: JWT ainda será implementado antes da entrega final.
   address: 127.0.0.1
   port: ${PORT:8080}
   servlet:
@@ -40,3 +36,6 @@ logging:
 
 app:
   seed-enabled: ${SEED_ENABLED:true}
+  auth:
+    usuario: ${CURSOLAB_OPERADOR_USUARIO:operador}
+    senha: ${CURSOLAB_OPERADOR_SENHA:}

@@ -1,5 +1,7 @@
 package br.pucpr.cursolab.categorias
 
+import br.pucpr.cursolab.config.BEARER_AUTH
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -14,6 +16,7 @@ class CategoriaController(private val service: CategoriaService) {
     fun listar() = service.listar()
 
     @PostMapping
+    @SecurityRequirement(name = BEARER_AUTH)
     fun criar(@Valid @RequestBody request: CategoriaRequest): ResponseEntity<CategoriaResponse> =
         ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request))
 }

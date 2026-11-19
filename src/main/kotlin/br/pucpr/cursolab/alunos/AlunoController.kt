@@ -1,5 +1,7 @@
 package br.pucpr.cursolab.alunos
 
+import br.pucpr.cursolab.config.BEARER_AUTH
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.*
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/alunos")
 @Tag(name = "3. Alunos", description = "CRUD completo de alunos")
+@SecurityRequirement(name = BEARER_AUTH)
 @Validated
 class AlunoController(private val service: AlunoService) {
     @GetMapping

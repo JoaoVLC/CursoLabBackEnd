@@ -1,9 +1,10 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-echo CursoLab - Apresentacao parcial
+echo CursoLab - API de cursos e matriculas
 echo Requisito: JDK 21. A primeira execucao precisa de internet.
 echo Swagger: http://localhost:8080/api/swagger-ui/index.html
+echo Para cadastrar o operador no primeiro uso, use os comandos do README.
 echo.
 call gradlew.bat bootRun
 if errorlevel 1 (

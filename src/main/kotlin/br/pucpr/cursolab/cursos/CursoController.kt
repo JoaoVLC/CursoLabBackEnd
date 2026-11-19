@@ -1,6 +1,8 @@
 package br.pucpr.cursolab.cursos
 
+import br.pucpr.cursolab.config.BEARER_AUTH
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import jakarta.validation.constraints.*
@@ -30,14 +32,17 @@ class CursoController(private val service: CursoService) {
     fun buscar(@PathVariable @Positive id: Long) = service.buscar(id)
 
     @PostMapping
+    @SecurityRequirement(name = BEARER_AUTH)
     fun criar(@Valid @RequestBody request: CursoRequest): ResponseEntity<CursoResponse> =
         ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request))
 
     @PutMapping("/{id}")
+    @SecurityRequirement(name = BEARER_AUTH)
     fun atualizar(@PathVariable @Positive id: Long, @Valid @RequestBody request: CursoRequest) =
         service.atualizar(id, request)
 
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = BEARER_AUTH)
     fun excluir(@PathVariable @Positive id: Long): ResponseEntity<Void> {
         service.excluir(id)
         return ResponseEntity.noContent().build()

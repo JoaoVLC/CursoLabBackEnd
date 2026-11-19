@@ -1,14 +1,14 @@
-# Roteiro da apresentação parcial — 29/10/2026
+# Roteiro da apresentação final do CursoLab
 
-Tempo sugerido: 6 a 8 minutos. Adapte ao tempo determinado pelo professor. Ensaie no mesmo computador antes da aula.
+Reserve de 7 a 9 minutos e ajuste ao tempo indicado pelo professor. João pode apresentar a proposta, o modelo e a consulta. Barbara pode demonstrar o login, o CRUD e as matrículas. Dividam a explicação dos arquivos e participem do vídeo.
 
 ## Antes de começar
 
-- Execute a aplicação e abra `http://localhost:8080/api/swagger-ui/index.html`.
+- Configure a conta de operador conforme o README. Execute a aplicação e abra `http://localhost:8080/api/swagger-ui/index.html`.
 - Deixe o terminal dos logs e o projeto abertos.
-- Consulte `GET /categorias`, `GET /cursos` e `GET /alunos`; anote os IDs atuais.
-- Abra `README.md`, `Curso.kt`, `Matricula.kt`, `CursoService.kt` e `AlunoService.kt`.
-- A documentação mostra 16 endpoints de negócio. `/health` é infraestrutura, fora da contagem.
+- Consulte `GET /categorias` e anote o ID da categoria que será usada no cadastro.
+- Abra `README.md`, `Curso.kt`, `Matricula.kt`, `CursoService.kt`, `AlunoService.kt` e `auth/SecurityConfig.kt`.
+- Use dados fictícios e uma senha exclusiva para o ambiente local de demonstração.
 
 ## 1. Apresentar a proposta — 30 segundos
 
@@ -37,7 +37,13 @@ Em seguida, preencha:
 
 Na carga inicial, aparecem primeiro Spring Boot (40h), depois SQL (30h). Kotlin (20h) fica fora pelo filtro. Explique que os parâmetros vêm pela URL, usando `@RequestParam`.
 
-## 4. Demonstrar um CRUD — 1 a 2 minutos
+## 4. Demonstrar o login — 1 minuto
+
+Execute `POST /auth/login` com o usuário e a senha configurados no terminal. Copie o campo `accessToken`, clique em **Authorize** e cole o token. Execute `GET /auth/me` para mostrar o usuário conectado.
+
+Explique que a senha fica no banco como hash BCrypt. Depois de conferir as credenciais, o servidor assina um token que vale 30 minutos. As próximas requisições enviam o token no cabeçalho `Authorization`.
+
+## 5. Demonstrar um CRUD — 1 a 2 minutos
 
 Em `POST /cursos`, use uma categoria existente:
 
@@ -54,7 +60,7 @@ Troque o 1 se a categoria tiver outro ID. Anote o ID retornado pelo curso. Mostr
 
 Consulte `GET /cursos/{id}` e depois use `PUT /cursos/{id}` com os mesmos campos, alterando a carga horária para **32**. Mostre a atualização no GET. Deixe a exclusão para depois da demonstração da matrícula.
 
-## 5. Demonstrar a associação e uma regra — 1 a 2 minutos
+## 6. Demonstrar matrículas e proteção de exclusão — 2 minutos
 
 Crie um aluno em `POST /alunos`:
 
@@ -70,11 +76,13 @@ No `POST /cursos/{cursoId}/matriculas`, use o ID do curso criado. No corpo, colo
 {"alunoId": 3}
 ```
 
-Consulte `GET /cursos/{cursoId}/matriculas`. O retorno mostra nomes, IDs e data da matrícula. Repita o POST para mostrar **409: matrícula duplicada**.
+Consulte `GET /cursos/{cursoId}/matriculas`. O retorno mostra nomes, IDs e data da matrícula. Repita o POST para mostrar o erro **409** de matrícula duplicada.
 
-Tente `DELETE /cursos/{id}` no curso matriculado: deve retornar **409**, pois o curso tem vínculos. Remova a matrícula em `DELETE /cursos/{cursoId}/matriculas/{alunoId}`. Agora exclua o curso e o aluno: ambos retornam **204**.
+1. Remova a autorização do Swagger em **Authorize → Logout**. Tente `DELETE /cursos/{id}` com o ID do curso criado. A API retorna **401** porque a requisição chegou sem token.
+2. Autorize novamente com o token e repita o DELETE. A API retorna **409** porque o curso ainda tem matrículas.
+3. Remova a associação em `DELETE /cursos/{cursoId}/matriculas/{alunoId}`. Exclua o curso e o aluno criados para a demonstração. A remoção da matrícula e as exclusões retornam **204**.
 
-## 6. Mostrar organização, logs e erros — 1 minuto
+## 7. Mostrar organização, logs e erros — 1 minuto
 
 Abra `CursoController`: ele recebe a requisição, valida os dados e chama o serviço.
 
@@ -82,13 +90,11 @@ Abra `CursoService`: ele concentra as regras e chama os repositórios. Aponte `@
 
 No terminal, aponte os logs de criação, alteração e exclusão. Em `GlobalExceptionHandler`, mostre a conversão das exceções em respostas HTTP estruturadas.
 
+Abra `SecurityConfig.kt` para mostrar as rotas públicas e onde a aplicação exige o JWT de operador. Em `AuthService.kt`, mostre como o login define a validade e assina o token.
+
 Se houver tempo, envie um curso com `cargaHoraria: 0` para mostrar **422** ou consulte um ID inexistente para mostrar **404**.
 
-## 7. Encerrar com o estado real — 30 segundos
-
-Mostre a tabela do README: 16 de 18 endpoints implementados, acima do mínimo de 9 nesse escopo. Explique que a próxima etapa é adicionar autenticação JWT, proteger as rotas e finalizar o vídeo/documentação.
-
-**Não apresente JWT como concluído:** nesta versão ainda não existe login nem exigência de token nos endpoints.
+Mostre no README os 18 endpoints e onde ficam as instruções de execução e os resultados dos testes.
 
 ## Perguntas que você deve saber responder
 
@@ -101,7 +107,7 @@ Mostre a tabela do README: 16 de 18 endpoints implementados, acima do mínimo de
 | O que faz o Service? | Aplica regras, verifica existência/duplicidade e coordena operações. |
 | Para que serve @Transactional? | Executa a operação dentro de uma transação, com rollback em falhas apropriadas. |
 | Como funciona a ordenação? | Um campo permitido e ASC/DESC geram um Sort aplicado à consulta no banco. |
-| O banco some ao reiniciar? | O banco da aplicação é H2 em arquivo; o dos testes é em memória. |
-| Já existe autenticação? | Ainda não; faz parte do plano para a final e protegerá operações como PUT e DELETE. |
-
-Se a equipe tiver três pessoas, uma pode explicar o domínio/relações, outra demonstrar CRUD/filtros e a terceira apresentar matrículas/erros/próximos passos. Todos precisam entender o fluxo completo.
+| O banco some ao reiniciar? | O banco da aplicação é H2 em arquivo e mantém os registros. Os testes usam outro banco, em memória. |
+| O que é BCrypt? | É a função usada para gerar o hash da senha. No login, o Spring Security confere a senha informada contra esse hash. |
+| Qual é a diferença entre 401 e 409 na exclusão? | 401 indica que faltou um token válido. Com o token correto, 409 indica que o curso tem matrículas vinculadas. |
+| O que muda quando a aplicação reinicia? | A conta permanece no banco. A chave do JWT é gerada de novo, então é preciso obter outro token. |

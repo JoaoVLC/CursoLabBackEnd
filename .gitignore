@@ -44,3 +44,4 @@ data/
 .env
 *.log
 executavel/
+requisicoes.local.http
