@@ -5,11 +5,11 @@ Projeto de Backend Development, PUCPR, desenvolvido para a **Opção 1 — Esten
 ## Integrantes
 
 - João Vitor Lima Cecilio
-- Barbara Franco
+- Bárbara Franco
 
 ## Vídeo de apresentação
 
-Link do YouTube a incluir após a gravação de João e Barbara. O vídeo pode ser não listado.
+https://youtu.be/cHTZTLh5IL8
 
 ## Requisitos
 
